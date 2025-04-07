@@ -55,37 +55,43 @@ export default {
         { name: "phone", type: "tel", placeholder: "Teléfono" },
       ],
       message: "",
-      errors: {}
+      errors: {},
+      validationRules: {
+        name: {
+          regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
+          required: "Este campo es obligatorio",
+          invalid: "Solo se permiten letras y espacios"
+        },
+        lastName: {
+          regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
+          required: "Este campo es obligatorio",
+          invalid: "Solo letras y espacios"
+        },
+        email: {
+          regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          required: "El correo es obligatorio",
+          invalid: "Correo inválido"
+        },
+        phone: {
+          regex: /^[\d\s+()\-]+$/,
+          required: "El teléfono es obligatorio",
+          invalid: "Solo se permiten números, espacios, +, paréntesis y guiones"
+        }
+      }
     };
   },
   methods: {
     validateField(field) {
-      if (field === "name" || field === "lastName") {
-        const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
-        this.errors[field] = this.form[field].trim() === ""
-          ? "Este campo es obligatorio"
-          : !nameRegex.test(this.form[field])
-          ? "Solo letras y espacios"
-          : "";
-      }
-
-      if (field === "email") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        this.errors.email = this.form.email.trim() === ""
-          ? "El correo es obligatorio"
-          : !emailRegex.test(this.form.email)
-          ? "Correo inválido"
-          : "";
-      }
-
-      if (field === "phone") {
-        const phoneRegex = /^\(\+\d{1,4}\)\s\d{3,5}(-\d{3,5})*$/;
-        this.errors.phone = this.form.phone.trim() === ""
-          ? "El teléfono es obligatorio"
-          : !phoneRegex.test(this.form.phone)
-          ? "Formato inválido (Ejemplo: (+504) 9999-9999 o (+1) 123-456-7890)"
-          : "";
-      }
+      const value = this.form[field].trim();
+      const rules = this.validationRules[field];
+      
+      if (!rules) return;
+      
+      this.errors[field] = value === ""
+        ? rules.required
+        : !rules.regex.test(value)
+        ? rules.invalid
+        : "";
     },
 
     async sendEmail() {
