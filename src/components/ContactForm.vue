@@ -95,8 +95,8 @@ export default {
 
       try {
         await emailjs.send(
-          "service_sc82me7",
-          "template_n63c5se",
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
           {
             name: `${this.form.name} ${this.form.lastName}`,
             email: this.form.email,
