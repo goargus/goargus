@@ -59,22 +59,22 @@ export default {
       validationRules: {
         name: {
           regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
-          required: "Este campo es obligatorio",
+          required: true,
           invalid: "Solo se permiten letras y espacios"
         },
         lastName: {
           regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
-          required: "Este campo es obligatorio",
+          required: true,
           invalid: "Solo se permiten letras y espacios"
         },
         email: {
           regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          required: "El correo es obligatorio",
+          required: true,
           invalid: "Correo inválido"
         },
         phone: {
           regex: /^[\d\s+()\-]+$/,
-          required: "El teléfono es obligatorio",
+          required: true,
           invalid: "Solo se permiten números, espacios, +, paréntesis y guiones"
         }
       }
@@ -87,11 +87,17 @@ export default {
       
       if (!rules) return;
       
-      this.errors[field] = value === ""
-        ? rules.required
-        : !rules.regex.test(value)
-        ? rules.invalid
-        : "";
+      if (rules.required && value === "") {
+        this.errors[field] = "Este campo es obligatorio";
+        return;
+      }
+      
+      if (value !== "" && !rules.regex.test(value)) {
+        this.errors[field] = rules.invalid;
+        return;
+      }
+      
+      this.errors[field] = "";
     },
 
     async sendEmail() {
