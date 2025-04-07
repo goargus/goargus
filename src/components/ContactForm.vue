@@ -12,7 +12,7 @@
           class="txtbox"
           @input="validateField(field.name)"
           required />
-        <p v-if="errors[field.name]" class="error-text">{{ errors[field.name] }}</p>
+        <p v-if="errors[field.name]" class="errortext">{{ errors[field.name] }}</p>
       </div>
 
       <div class="relative">
@@ -131,7 +131,7 @@ export default {
 .buttonsend {
   @apply w-3/5 py-3 mt-2 text-gray rounded-full shadow-3xl focus:outline-none border-white border-2;
 }
-.error-text {
+.errortext {
   @apply text-red-500 text-sm mt-1;
 }
 </style>
