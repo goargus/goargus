@@ -65,7 +65,7 @@ export default {
         lastName: {
           regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
           required: "Este campo es obligatorio",
-          invalid: "Solo letras y espacios"
+          invalid: "Solo se permiten letras y espacios"
         },
         email: {
           regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
