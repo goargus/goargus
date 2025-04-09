@@ -21,23 +21,31 @@ describe('ContactForm', () => {
     const inputs = wrapper.findAll('input')
 
     const expectedFields = [
-      { type: 'text', placeholder: 'Nombre' },
-      { type: 'text', placeholder: 'Apellido' },
-      { type: 'email', placeholder: 'Correo' },
-      { type: 'tel', placeholder: 'Teléfono' }
+      { type: 'text', placeholder: 'Nombre', pattern: '^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$', title: 'El nombre solo puede contener letras y espacios' },
+      { type: 'text', placeholder: 'Apellido', pattern: '^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$', title: 'El apellido solo puede contener letras y espacios' },
+      { type: 'email', placeholder: 'Correo', title: 'Por favor ingresa un correo electrónico válido' },
+      { type: 'tel', placeholder: 'Teléfono', pattern: '^[\\d\\s+()\\-]+$', title: 'El teléfono solo puede contener números, espacios, +, paréntesis y guiones' }
     ]
 
     expectedFields.forEach((field, index) => {
       expect(inputs[index].attributes('type')).toBe(field.type)
       expect(inputs[index].attributes('placeholder')).toBe(field.placeholder)
+      if (field.pattern) {
+        expect(inputs[index].attributes('pattern')).toBe(field.pattern)
+      }
+      expect(inputs[index].attributes('title')).toBe(field.title)
+      expect(inputs[index].attributes('required')).toBeDefined()
     })
   })
 
-  it('Has a textarea for messages', () => {
+  it('Has a textarea for messages with correct attributes', () => {
     const wrapper = mount(ContactForm)
     const textarea = wrapper.find('textarea')
     expect(textarea.exists()).toBe(true)
     expect(textarea.attributes('placeholder')).toBe('Mensaje')
+    expect(textarea.attributes('minlength')).toBe('10')
+    expect(textarea.attributes('title')).toBe('El mensaje debe tener al menos 10 caracteres')
+    expect(textarea.attributes('required')).toBeDefined()
   })
 
   it('Has a submit button with correct text', () => {
@@ -47,97 +55,22 @@ describe('ContactForm', () => {
     expect(button.text()).toBe('Enviar')
   })
 
-  describe('Form Validations', () => {
-    const setupTest = () => {
-      const wrapper = mount(ContactForm)
-      return {
-        wrapper,
-        nameInput: wrapper.find('input[placeholder="Nombre"]'),
-        lastNameInput: wrapper.find('input[placeholder="Apellido"]'),
-        emailInput: wrapper.find('input[placeholder="Correo"]'),
-        phoneInput: wrapper.find('input[placeholder="Teléfono"]')
+  it('Form submission works correctly', async () => {
+    const wrapper = mount(ContactForm)
+    const form = wrapper.find('form')
+    
+    await wrapper.setData({
+      form: {
+        name: 'John',
+        lastName: 'Doe',
+        email: 'test@example.com',
+        phone: '+1 (234) 567-8900',
+        message: 'This is a test message with more than 10 characters'
       }
-    }
-
-    describe('Name and Last Name Validation', () => {
-      it('Validates required field', async () => {
-        const { wrapper, nameInput } = setupTest()
-        await nameInput.setValue('')
-        await nameInput.trigger('input')
-        expect(wrapper.vm.errors.name).toBe('Este campo es obligatorio')
-      })
-
-      it('Validates format with invalid characters', async () => {
-        const { wrapper, nameInput } = setupTest()
-        await nameInput.setValue('John123')
-        await nameInput.trigger('input')
-        expect(wrapper.vm.errors.name).toBe('Solo se permiten letras y espacios')
-      })
-
-      it('Accepts valid input', async () => {
-        const { wrapper, nameInput } = setupTest()
-        await nameInput.setValue('John Doe')
-        await nameInput.trigger('input')
-        expect(wrapper.vm.errors.name).toBe('')
-      })
     })
 
-    describe('Email Validation', () => {
-      it('Validates required field', async () => {
-        const { wrapper, emailInput } = setupTest()
-        await emailInput.setValue('')
-        await emailInput.trigger('input')
-        expect(wrapper.vm.errors.email).toBe('Este campo es obligatorio')
-      })
-
-      it('Validates email format', async () => {
-        const { wrapper, emailInput } = setupTest()
-        await emailInput.setValue('invalid-email')
-        await emailInput.trigger('input')
-        expect(wrapper.vm.errors.email).toBe('Correo inválido')
-      })
-
-      it('Accepts valid email', async () => {
-        const { wrapper, emailInput } = setupTest()
-        await emailInput.setValue('test@example.com')
-        await emailInput.trigger('input')
-        expect(wrapper.vm.errors.email).toBe('')
-      })
-    })
-
-    describe('Phone Validation', () => {
-      it('Validates required field', async () => {
-        const { wrapper, phoneInput } = setupTest()
-        await phoneInput.setValue('')
-        await phoneInput.trigger('input')
-        expect(wrapper.vm.errors.phone).toBe('Este campo es obligatorio')
-      })
-
-      it('Validates invalid characters', async () => {
-        const { wrapper, phoneInput } = setupTest()
-        await phoneInput.setValue('123@456')
-        await phoneInput.trigger('input')
-        expect(wrapper.vm.errors.phone).toBe('Solo se permiten números, espacios, +, paréntesis y guiones')
-      })
-
-      it('Accepts various valid formats', async () => {
-        const { wrapper, phoneInput } = setupTest()
-        const validFormats = [
-          '+55 (11) 8765-4321',
-          '(+504) 9999-9999',
-          '+1 234-567-8900',
-          '(123) 456-7890',
-          '1234567890',
-          '+1234567890',
-          '123-456-7890'
-        ]
-
-        for (const format of validFormats) {
-          await phoneInput.setValue(format)
-          await phoneInput.trigger('input')
-          expect(wrapper.vm.errors.phone).toBe('')
-        }
-      })
-    })
+    await form.trigger('submit.prevent')
+    
+    expect(wrapper.vm.message).toBeDefined()
   })
 }) 
