@@ -22,7 +22,7 @@
           placeholder="Mensaje"
           class="txtboxmsg"
           minlength="5"
-          title="El mensaje debe tener al menos 10 caracteres"
+          title="El mensaje debe tener al menos 5 caracteres"
           required></textarea>
       </div>
 
