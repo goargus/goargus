@@ -10,9 +10,9 @@
           :type="field.type"
           :placeholder="field.placeholder"
           class="txtbox"
-          @input="validateField(field.name)"
+          :pattern="field.pattern"
+          :title="field.title"
           required />
-        <p v-if="errors[field.name]" class="errortext">{{ errors[field.name] }}</p>
       </div>
 
       <div class="relative">
@@ -21,6 +21,8 @@
           name="message"
           placeholder="Mensaje"
           class="txtboxmsg"
+          minlength="5"
+          title="El mensaje debe tener al menos 5 caracteres"
           required></textarea>
       </div>
 
@@ -49,62 +51,16 @@ export default {
         message: ""
       },
       fields: [
-        { name: "name", type: "text", placeholder: "Nombre" },
-        { name: "lastName", type: "text", placeholder: "Apellido" },
-        { name: "email", type: "email", placeholder: "Correo" },
-        { name: "phone", type: "tel", placeholder: "Teléfono" },
+        { name: "name", type: "text", placeholder: "Nombre", pattern: "^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$", title: "El nombre solo puede contener letras y espacios" },
+        { name: "lastName", type: "text", placeholder: "Apellido", pattern: "^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$", title: "El apellido solo puede contener letras y espacios" },
+        { name: "email", type: "email", placeholder: "Correo", title: "Por favor ingresa un correo electrónico válido" },
+        { name: "phone", type: "tel", placeholder: "Teléfono", pattern: "^[\\d\\s+()\\-]+$", title: "El teléfono solo puede contener números, espacios, +, paréntesis y guiones" },
       ],
-      message: "",
-      errors: {},
-      validationRules: {
-        name: {
-          regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
-          required: true,
-          invalid: "Solo se permiten letras y espacios"
-        },
-        lastName: {
-          regex: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/,
-          required: true,
-          invalid: "Solo se permiten letras y espacios"
-        },
-        email: {
-          regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          required: true,
-          invalid: "Correo inválido"
-        },
-        phone: {
-          regex: /^[\d\s+()\-]+$/,
-          required: true,
-          invalid: "Solo se permiten números, espacios, +, paréntesis y guiones"
-        }
-      }
+      message: ""
     };
   },
   methods: {
-    validateField(field) {
-      const value = this.form[field].trim();
-      const rules = this.validationRules[field];
-      
-      if (!rules) return;
-      
-      if (rules.required && value === "") {
-        this.errors[field] = "Este campo es obligatorio";
-        return;
-      }
-      
-      if (value !== "" && !rules.regex.test(value)) {
-        this.errors[field] = rules.invalid;
-        return;
-      }
-      
-      this.errors[field] = "";
-    },
-
     async sendEmail() {
-      Object.keys(this.form).forEach(field => this.validateField(field));
-
-      if (Object.values(this.errors).some(error => error)) return;
-
       try {
         await emailjs.send(
           import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -120,7 +76,6 @@ export default {
 
         this.message = "¡Mensaje enviado con éxito!";
         this.form = { name: "", lastName: "", email: "", phone: "", message: "" };
-        this.errors = {};
       } catch (error) {
         this.message = "Error al enviar el mensaje.";
         console.error("EmailJS Error:", error);
@@ -142,8 +97,5 @@ export default {
 }
 .buttonsend {
   @apply w-3/5 py-3 mt-2 text-gray rounded-full shadow-3xl focus:outline-none border-white border-2;
-}
-.errortext {
-  @apply text-red-500 text-sm mt-1;
 }
 </style>
