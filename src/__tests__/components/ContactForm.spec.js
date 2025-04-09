@@ -43,8 +43,8 @@ describe('ContactForm', () => {
     const textarea = wrapper.find('textarea')
     expect(textarea.exists()).toBe(true)
     expect(textarea.attributes('placeholder')).toBe('Mensaje')
-    expect(textarea.attributes('minlength')).toBe('10')
-    expect(textarea.attributes('title')).toBe('El mensaje debe tener al menos 10 caracteres')
+    expect(textarea.attributes('minlength')).toBe('5')
+    expect(textarea.attributes('title')).toBe('El mensaje debe tener al menos 5 caracteres')
     expect(textarea.attributes('required')).toBeDefined()
   })
 
