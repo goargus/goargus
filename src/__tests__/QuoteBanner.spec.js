@@ -1,95 +1,88 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import QuoteBanner from '../components/QuoteBanner.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 describe('QuoteBanner', () => {
+  const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: '/contact', component: {} }
+    ]
+  })
+
   it('mounts properly', () => {
-    const wrapper = mount(QuoteBanner)
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
     expect(wrapper.exists()).toBe(true)
   })
 
   it('renders the main heading correctly', () => {
-    const wrapper = mount(QuoteBanner)
-    const heading = wrapper.find('h1')
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
+    const heading = wrapper.find('h2')
     expect(heading.exists()).toBe(true)
     expect(heading.text()).toBe('Y TÚ, ¿YA TIENES WEBSITE?')
-    expect(heading.classes()).toContain('text-lightGreen')
+    expect(heading.classes()).toContain('quote-title')
   })
 
   it('renders the website preview image', () => {
-    const wrapper = mount(QuoteBanner)
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
     const image = wrapper.find('img')
     expect(image.exists()).toBe(true)
     expect(image.attributes('alt')).toBe('Website Preview')
-    expect(image.classes()).toContain('max-w-full')
-    expect(image.classes()).toContain('h-auto')
-    expect(image.classes()).toContain('relative')
+    expect(image.classes()).toContain('quote-image')
   })
 
   it('renders the call to action heading', () => {
-    const wrapper = mount(QuoteBanner)
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
     const ctaHeading = wrapper.find('h3')
     expect(ctaHeading.exists()).toBe(true)
     expect(ctaHeading.text()).toBe('¡Quiero Mi Website!')
-    expect(ctaHeading.classes()).toContain('text-3xl')
-    expect(ctaHeading.classes()).toContain('font-bold')
-    expect(ctaHeading.classes()).toContain('text-txtcolor')
+    expect(ctaHeading.classes()).toContain('quote-subtitle')
   })
 
-  it('renders the quote button with correct attributes', () => {
-    const wrapper = mount(QuoteBanner)
-    const button = wrapper.find('button')
-    expect(button.exists()).toBe(true)
-    expect(button.text()).toBe('Cotizar')
-    expect(button.classes()).toContain('px-20')
-    expect(button.classes()).toContain('py-2')
-    expect(button.classes()).toContain('bg-lightGreen')
-    expect(button.classes()).toContain('text-white')
-    expect(button.classes()).toContain('border-2')
-    expect(button.classes()).toContain('rounded-full')
-    expect(button.classes()).toContain('shadow-3xl')
-    expect(button.classes()).toContain('hover:bg-lightGreen')
-    expect(button.classes()).toContain('transition')
-    expect(button.classes()).toContain('text-xl')
+  it('renders the quote button as router-link', () => {
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
+    const link = wrapper.find('a.quote-button')
+    expect(link.exists()).toBe(true)
+    expect(link.text()).toBe('Cotizar')
+    expect(link.attributes('href')).toBe('/contact')
   })
 
   it('has correct section layout and classes', () => {
-    const wrapper = mount(QuoteBanner)
+    const wrapper = mount(QuoteBanner, {
+      global: {
+        plugins: [router]
+      }
+    })
     const section = wrapper.find('section')
 
-    expect(section.classes()).toContain('relative')
-    expect(section.classes()).toContain('flex')
-    expect(section.classes()).toContain('flex-col')
-    expect(section.classes()).toContain('md:flex-row')
-    expect(section.classes()).toContain('items-center')
-    expect(section.classes()).toContain('justify-center')
-    expect(section.classes()).toContain('w-auto')
-    expect(section.classes()).toContain('max-h-[225px]')
-    expect(section.classes()).toContain('text-center')
-    expect(section.classes()).toContain('py-1')
-    expect(section.classes()).toContain('bg-white')
+    expect(section.classes()).toContain('quote-banner')
 
     const divs = wrapper.findAll('div')
     expect(divs.length).toBe(3)
 
-    expect(divs[0].classes()).toContain('w-1/3')
-    expect(divs[0].classes()).toContain('font-inter')
-    expect(divs[0].classes()).toContain('max-w-[300px]')
-    expect(divs[0].classes()).toContain('text-3xl')
-    expect(divs[0].classes()).toContain('uppercase')
-
-    expect(divs[1].classes()).toContain('relative')
-    expect(divs[1].classes()).toContain('flex')
-    expect(divs[1].classes()).toContain('flex-col')
-    expect(divs[1].classes()).toContain('items-center')
-    expect(divs[1].classes()).toContain('justify-center')
-    expect(divs[1].classes()).toContain('w-2/3')
-
-    expect(divs[2].classes()).toContain('w-3/3')
-    expect(divs[2].classes()).toContain('flex')
-    expect(divs[2].classes()).toContain('flex-col')
-    expect(divs[2].classes()).toContain('items-center')
-    expect(divs[2].classes()).toContain('mt-4')
-    expect(divs[2].classes()).toContain('md:mt-0')
+    expect(divs[0].classes()).toContain('quote-content')
+    expect(divs[1].classes()).toContain('quote-image-container')
+    expect(divs[2].classes()).toContain('quote-cta-container')
   })
-}) 
+})
