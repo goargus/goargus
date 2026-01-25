@@ -7,6 +7,7 @@ describe('FooterMenu', () => {
   const router = createRouter({
     history: createWebHistory(),
     routes: [
+      { path: '/', component: {} },
       { path: '/contact', component: {} },
       { path: '/about', component: {} }
     ]
@@ -33,12 +34,10 @@ describe('FooterMenu', () => {
         plugins: [router]
       }
     })
-    const logo = wrapper.find('img[alt=""]')
+    const logo = wrapper.find('img.footer-logo')
     expect(logo.exists()).toBe(true)
     expect(logo.attributes('loading')).toBe('lazy')
-    expect(logo.classes()).toContain('object-contain')
-    expect(logo.classes()).toContain('shrink-0')
-    expect(logo.classes()).toContain('aspect-[1.53]')
+    expect(logo.attributes('alt')).toBe('Go Argus Logo')
   })
 
   it('renders navigation links correctly', () => {
@@ -50,7 +49,7 @@ describe('FooterMenu', () => {
     })
     const links = wrapper.findAll('a')
 
-    expect(links.length).toBe(4) 
+    expect(links.length).toBe(4)
     expect(links[0].text()).toBe('Contáctanos')
     expect(links[0].attributes('href')).toBe('/contact')
     expect(links[1].text()).toBe('Acerca de Nosotros')
@@ -64,15 +63,14 @@ describe('FooterMenu', () => {
         plugins: [router]
       }
     })
-    const socialLinks = wrapper.findAll('a[aria-label="Social media link"]')
-    const socialImages = wrapper.findAll('img[alt="facebook"], img[alt="instagram"]')
+    const socialLinks = wrapper.findAll('a.social-icon-link')
+    const socialImages = wrapper.findAll('img.social-icon')
 
     expect(socialLinks.length).toBe(2)
     expect(socialImages.length).toBe(2)
-    
-    expect(socialImages[0].attributes('alt')).toBe('facebook')
-    
-    expect(socialImages[1].attributes('alt')).toBe('instagram')
+
+    expect(socialImages[0].attributes('alt')).toBe('Facebook')
+    expect(socialImages[1].attributes('alt')).toBe('Instagram')
   })
 
   it('has correct CSS classes and styles', () => {
@@ -84,26 +82,13 @@ describe('FooterMenu', () => {
     })
 
     const footer = wrapper.find('footer')
-    expect(footer.classes()).toContain('flex')
-    expect(footer.classes()).toContain('relative')
-    expect(footer.classes()).toContain('gap-10')
-    expect(footer.classes()).toContain('items-center')
-    expect(footer.classes()).toContain('px-10')
-    expect(footer.classes()).toContain('mt-0')
-    expect(footer.classes()).toContain('min-h-[193fpx]')
+    expect(footer.classes()).toContain('footer-container')
 
     const nav = wrapper.find('nav')
-    expect(nav.classes()).toContain('flex')
-    expect(nav.classes()).toContain('z-0')
-    expect(nav.classes()).toContain('flex-col')
+    expect(nav.classes()).toContain('footer-nav')
 
     const ul = wrapper.find('ul')
-    expect(ul.classes()).toContain('flex')
-    expect(ul.classes()).toContain('flex-col')
-    expect(ul.classes()).toContain('w-full')
-    expect(ul.classes()).toContain('text-2xl')
-    expect(ul.classes()).toContain('list-none')
-    expect(ul.classes()).toContain('p-0')
+    expect(ul.classes()).toContain('footer-links')
   })
 
   it('requires title prop', () => {
@@ -117,4 +102,4 @@ describe('FooterMenu', () => {
     const props = wrapper.vm.$options.props
     expect(props.title.required).toBe(true)
   })
-}) 
+})
