@@ -62,10 +62,10 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { Project } from '../types/project'
+import { LegacyProject } from '../types/project'
 
 const props = defineProps<{
-  projects: Project[]
+  projects: LegacyProject[]
 }>()
 
 const currentIndex = ref(0)

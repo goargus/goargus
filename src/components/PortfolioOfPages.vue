@@ -4,48 +4,42 @@
       {{ title }}
     </h2>
 
-    <Carousel :projects="projects" />
+    <Carousel :projects="legacyProjects" />
   </section>
 </template>
 
-<script lang="ts">
-import Carousel from './Carousel.vue';
-import mockup from '../assets/mockup.png';
+<script lang="ts" setup>
+import { computed } from 'vue'
+import Carousel from './Carousel.vue'
+import { getFeaturedProjects, toLegacyProject } from '../data/projects'
+import mockup from '../assets/mockup.png'
 
-export default {
-  name: 'PortfolioOfPages',
-  components: {
-    Carousel,
-  },
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      projects: [
-        {
-          imagesrc: mockup,
-          imageAlt: 'Descripcion',
-          link: '#',
-        },
-        {
+defineProps<{
+  title: string
+}>()
 
-          imagesrc: mockup,
-          imageAlt: 'Descripcion',
-          link: '#',
-        },
-        {
-          imagesrc: mockup,
-          imageAlt: 'Descripcion',
-          link: '#',
-        },
-      ],
-    };
-  },
-};
+// Get featured projects from real data, falling back to mockup if images aren't available
+const legacyProjects = computed(() => {
+  const featured = getFeaturedProjects()
+
+  // If we have real projects, convert them to legacy format
+  if (featured.length > 0) {
+    return featured.map(project => ({
+      ...toLegacyProject(project),
+      // Use mockup as fallback for placeholder images
+      imagesrc: project.thumbnail.src.startsWith('/portfolio/placeholder')
+        ? mockup
+        : project.thumbnail.src
+    }))
+  }
+
+  // Fallback to original mock data
+  return [
+    { imagesrc: mockup, imageAlt: 'Descripcion', link: '#' },
+    { imagesrc: mockup, imageAlt: 'Descripcion', link: '#' },
+    { imagesrc: mockup, imageAlt: 'Descripcion', link: '#' },
+  ]
+})
 </script>
 
 <style scoped>
