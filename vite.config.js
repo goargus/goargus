@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
-import { viteObfuscateFile } from 'vite-plugin-obfuscator';
+import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,10 +9,14 @@ export default defineConfig({
   plugins: [
     vue(),
     Pages(),
-    viteObfuscateFile({
-      global: true, 
-      stringArray: true, 
-      transformObjectKeys: true, 
+    vitePluginBundleObfuscator({
+      enable: true,
+      log: false,
+      autoExcludeNodeModules: true,
+      options: {
+        stringArray: true,
+        transformObjectKeys: true,
+      }
     }),
   ],
   build: {
