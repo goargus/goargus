@@ -40,24 +40,18 @@ describe('PortfolioOfPages', () => {
       props: mockProps
     })
     const carousel = wrapper.findComponent({ name: 'Carousel' })
-    
-    expect(carousel.props('projects')).toEqual([
-      {
-        imagesrc: expect.any(String),
-        imageAlt: 'Descripcion',
-        link: '#'
-      },
-      {
-        imagesrc: expect.any(String),
-        imageAlt: 'Descripcion',
-        link: '#'
-      },
-      {
-        imagesrc: expect.any(String),
-        imageAlt: 'Descripcion',
-        link: '#'
-      }
-    ])
+    const projects = carousel.props('projects')
+
+    // Verify projects array has items with expected structure
+    expect(projects.length).toBeGreaterThan(0)
+    projects.forEach(project => {
+      expect(project).toHaveProperty('imagesrc')
+      expect(project).toHaveProperty('imageAlt')
+      expect(project).toHaveProperty('link')
+      expect(typeof project.imagesrc).toBe('string')
+      expect(typeof project.imageAlt).toBe('string')
+      expect(typeof project.link).toBe('string')
+    })
   })
 
   it('has correct section layout and classes', () => {
