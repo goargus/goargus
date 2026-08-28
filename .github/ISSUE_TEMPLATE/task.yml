@@ -1,0 +1,46 @@
+name: Task
+description: A single unit of work, usually a sub-issue of a parent
+body:
+  - type: input
+    id: parent
+    attributes:
+      label: Parent
+      description: The parent issue this belongs to, if any.
+      placeholder: "#61"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: >
+        What needs doing and why. Implementation detail belongs here rather than in the
+        parent: code, commands, exact records, provider specifics.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: The steps, as a checklist.
+      placeholder: |
+        - [ ] Enable Email Routing on the zone
+        - [ ] Verify the destination inbox
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: >
+        Anything that must land first, and anything blocked until this does. Leave blank
+        if the task stands alone.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Done when
+      description: A single checkable statement of completion.
+    validations:
+      required: true
