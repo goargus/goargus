@@ -1,0 +1,64 @@
+name: Parent issue
+description: A high-level piece of work, broken down into sub-issues
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep this high level. Implementation detail, code snippets and step-by-step
+        instructions belong in the sub-issues, not here.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is wrong or missing, in two or three sentences.
+      placeholder: The site ships with no metadata beyond a charset, a viewport and a static title.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: >
+        Evidence. Commands and their output, file paths with line numbers, live checks.
+        Facts that establish the problem, not a plan for fixing it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: goals
+    attributes:
+      label: Goals
+      description: What this issue is for, as a short list.
+      placeholder: |
+        - Per-route titles and descriptions
+        - Social preview cards on the major platforms
+    validations:
+      required: true
+
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: >
+        What is deliberately excluded, and where it is tracked instead. This is what stops
+        scope creeping later, and records that an omission was a decision.
+      placeholder: |
+        - Page copy and keyword research
+        - Content strategy
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: >
+        Checkable statements, one per line. Each must be independently verifiable and true
+        before this closes. Avoid prose.
+      placeholder: |
+        - [ ] Each route has a unique title
+        - [ ] A shared link renders a preview card
+    validations:
+      required: true
