@@ -1,0 +1,89 @@
+{
+  "_comment": "Synthetic data for the projects data-layer tests only. Never shipped, never rendered. Names are deliberately generic placeholders so nothing here can be mistaken for a real client reference.",
+  "projects": [
+    {
+      "id": "fixture-1",
+      "slug": "proyecto-ejemplo-uno",
+      "title": "Proyecto Ejemplo Uno",
+      "shortDescription": "Descripcion corta de ejemplo para el proyecto uno",
+      "fullDescription": "Descripcion larga de ejemplo usada unicamente por las pruebas de la capa de datos.",
+      "category": "e-commerce",
+      "size": "major",
+      "featured": true,
+      "thumbnail": {
+        "src": "/portfolio/fixture-uno-thumb.jpg",
+        "alt": "Miniatura de ejemplo uno"
+      },
+      "heroImage": {
+        "src": "/portfolio/fixture-uno-hero.jpg",
+        "alt": "Imagen principal de ejemplo uno"
+      },
+      "gallery": [
+        {
+          "src": "/portfolio/fixture-uno-1.jpg",
+          "alt": "Galeria de ejemplo uno",
+          "caption": "Captura de ejemplo"
+        }
+      ],
+      "technologies": ["Vue 3", "Tailwind CSS"],
+      "clientName": "Cliente Ejemplo Uno",
+      "liveUrl": "https://example.com/uno",
+      "testimonial": {
+        "quote": "Texto de testimonio de ejemplo usado solo en pruebas.",
+        "author": "Persona Ejemplo",
+        "role": "Cargo Ejemplo",
+        "company": "Cliente Ejemplo Uno"
+      },
+      "completedDate": "2025-01-01",
+      "order": 1
+    },
+    {
+      "id": "fixture-2",
+      "slug": "proyecto-ejemplo-dos",
+      "title": "Proyecto Ejemplo Dos",
+      "shortDescription": "Descripcion corta de ejemplo para el proyecto dos",
+      "fullDescription": "Segunda entrada sintetica para cubrir proyectos destacados y de tamano simple.",
+      "category": "corporate",
+      "size": "simple",
+      "featured": true,
+      "thumbnail": {
+        "src": "/portfolio/fixture-dos-thumb.jpg",
+        "alt": "Miniatura de ejemplo dos"
+      },
+      "heroImage": {
+        "src": "/portfolio/fixture-dos-hero.jpg",
+        "alt": "Imagen principal de ejemplo dos"
+      },
+      "gallery": [],
+      "technologies": ["Vue 3"],
+      "clientName": "Cliente Ejemplo Dos",
+      "liveUrl": "",
+      "completedDate": "2025-02-01",
+      "order": 2
+    },
+    {
+      "id": "fixture-3",
+      "slug": "proyecto-ejemplo-tres",
+      "title": "Proyecto Ejemplo Tres",
+      "shortDescription": "Descripcion corta de ejemplo para el proyecto tres",
+      "fullDescription": "Tercera entrada sintetica, no destacada, para cubrir el filtrado por categoria.",
+      "category": "landing-page",
+      "size": "simple",
+      "featured": false,
+      "thumbnail": {
+        "src": "/portfolio/fixture-tres-thumb.jpg",
+        "alt": "Miniatura de ejemplo tres"
+      },
+      "heroImage": {
+        "src": "/portfolio/fixture-tres-hero.jpg",
+        "alt": "Imagen principal de ejemplo tres"
+      },
+      "gallery": [],
+      "technologies": ["Vue 3", "Vite"],
+      "clientName": "Cliente Ejemplo Tres",
+      "liveUrl": "#",
+      "completedDate": "2025-03-01",
+      "order": 3
+    }
+  ]
+}

@@ -1,4 +1,13 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+// The shipped projects.json is deliberately empty until real client work
+// exists (#63). These tests exercise the data layer itself, so they run
+// against a synthetic fixture instead.
+vi.mock('../../data/projects.json', async () => {
+  const fixture = await import('../fixtures/projects.fixture.json')
+  return { default: fixture.default }
+})
+
 import {
   getAllProjects,
   getFeaturedProjects,
