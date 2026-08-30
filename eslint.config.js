@@ -30,7 +30,7 @@ export default [
       "vue/multi-word-component-names": "off",
       "vue/comment-directive": "off",
       "no-unused-vars": "warn",
-      "no-console": "warn",
+      "no-console": ["warn", { allow: ["error"] }],
     },
   },
 ];

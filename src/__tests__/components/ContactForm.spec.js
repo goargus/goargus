@@ -1,8 +1,36 @@
-import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mount, flushPromises } from '@vue/test-utils'
+import emailjs from 'emailjs-com'
 import ContactForm from '../../components/ContactForm.vue'
 
+vi.mock('emailjs-com', () => ({
+  default: { send: vi.fn() },
+}))
+
+const SUCCESS_MESSAGE = '¡Mensaje enviado con éxito!'
+const ERROR_MESSAGE = 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.'
+
+const filledForm = {
+  name: 'John',
+  lastName: 'Doe',
+  email: 'test@example.com',
+  phone: '+1 (234) 567-8900',
+  message: 'This is a test message with more than 10 characters',
+}
+
+async function submitFilledForm() {
+  const wrapper = mount(ContactForm)
+  await wrapper.setData({ form: { ...filledForm } })
+  await wrapper.find('form').trigger('submit.prevent')
+  await flushPromises()
+  return wrapper
+}
+
 describe('ContactForm', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('Mounts properly', () => {
     const wrapper = mount(ContactForm)
     expect(wrapper.exists()).toBe(true)
@@ -55,22 +83,50 @@ describe('ContactForm', () => {
     expect(button.text()).toBe('Enviar')
   })
 
-  it('Form submission works correctly', async () => {
-    const wrapper = mount(ContactForm)
-    const form = wrapper.find('form')
-    
-    await wrapper.setData({
-      form: {
-        name: 'John',
-        lastName: 'Doe',
-        email: 'test@example.com',
-        phone: '+1 (234) 567-8900',
-        message: 'This is a test message with more than 10 characters'
-      }
-    })
+  it('Sends the form values through EmailJS on submit', async () => {
+    emailjs.send.mockResolvedValue({ status: 200, text: 'OK' })
 
-    await form.trigger('submit.prevent')
-    
-    expect(wrapper.vm.message).toBeDefined()
+    await submitFilledForm()
+
+    expect(emailjs.send).toHaveBeenCalledTimes(1)
+    expect(emailjs.send.mock.calls[0][2]).toEqual({
+      name: 'John Doe',
+      email: filledForm.email,
+      phone: filledForm.phone,
+      message: filledForm.message,
+    })
   })
-}) 
+
+  it('Shows the success feedback when the send resolves', async () => {
+    emailjs.send.mockResolvedValue({ status: 200, text: 'OK' })
+
+    const wrapper = await submitFilledForm()
+    const feedback = wrapper.find('.message-feedback')
+
+    expect(feedback.exists()).toBe(true)
+    expect(feedback.text()).toBe(SUCCESS_MESSAGE)
+    expect(feedback.classes()).toContain('message-success')
+    expect(wrapper.vm.isSuccess).toBe(true)
+    expect(wrapper.vm.isSubmitting).toBe(false)
+    expect(wrapper.vm.form.name).toBe('')
+    expect(wrapper.vm.form.message).toBe('')
+  })
+
+  it('Shows the error feedback when the send rejects', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    emailjs.send.mockRejectedValue(new Error('The user ID is required.'))
+
+    const wrapper = await submitFilledForm()
+    const feedback = wrapper.find('.message-feedback')
+
+    expect(feedback.exists()).toBe(true)
+    expect(feedback.text()).toBe(ERROR_MESSAGE)
+    expect(feedback.classes()).toContain('message-error')
+    expect(wrapper.vm.isSuccess).toBe(false)
+    expect(wrapper.vm.isSubmitting).toBe(false)
+    expect(wrapper.vm.form.message).toBe(filledForm.message)
+    expect(consoleError).toHaveBeenCalledTimes(1)
+
+    consoleError.mockRestore()
+  })
+})
