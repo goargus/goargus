@@ -4,18 +4,23 @@ import Pages from 'vite-plugin-pages'
 import vitePluginBundleObfuscator from 'vite-plugin-bundle-obfuscator';
 import { copyFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { pageRoutes } from './build/pageRoutes.js'
 
-function emitNotFoundShell() {
+function emitRouteShells() {
   return {
-    name: "emit-not-found-shell",
+    name: "emit-route-shells",
     apply: "build",
     writeBundle(options) {
       const outDir = options.dir ?? "dist";
       const shell = resolve(outDir, "index.html");
       if (!existsSync(shell)) {
-        this.error("index.html was not emitted, cannot create 404.html");
+        this.error("index.html was not emitted, cannot create the route shells");
       }
       copyFileSync(shell, resolve(outDir, "404.html"));
+      for (const route of pageRoutes()) {
+        if (route === "/") continue;
+        copyFileSync(shell, resolve(outDir, `${route.slice(1)}.html`));
+      }
     },
   };
 }
@@ -26,7 +31,7 @@ export default defineConfig({
   plugins: [
     vue(),
     Pages(),
-    emitNotFoundShell(),
+    emitRouteShells(),
     vitePluginBundleObfuscator({
       enable: true,
       log: false,
