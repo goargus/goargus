@@ -21,6 +21,9 @@ Prefix every `gh` call with `export GH_CONFIG_DIR=~/.config/gh`.
   comments, no JSDoc headers. Anything worth explaining goes in the PR body
   under Notes for review, or in a PR comment. Comments already in the
   codebase stay; removing them is its own task.
+- **Never hard wrap a GitHub body.** Issue bodies, PR bodies and comments
+  render every single newline inside a paragraph as a line break. Write each
+  paragraph and each list item on one long line and let it wrap on screen.
 
 ## Phase 1: Read the contract
 
@@ -86,17 +89,29 @@ a caveat.
 
 ## Phase 5: Open the PR
 
+Write the body to a file, run it through the reflow check, and only then
+create the PR. The check is not optional and `gh pr create --body` with an
+inline string is not allowed, because it skips the check.
+
 ```
 git push -u origin issue-$ARGUMENTS
+$EDITOR /tmp/pr-body.md
+.claude/scripts/gh-body.py --fix /tmp/pr-body.md
+.claude/scripts/gh-body.py --check /tmp/pr-body.md
 gh pr create --repo goargus/goargus --base main --head issue-$ARGUMENTS \
-  --title "<type>: <what changed>" --body "<filled template>"
+  --title "<type>: <what changed>" --body-file /tmp/pr-body.md
 ```
+
+`--check` exits non-zero if any paragraph is still hard wrapped. A non-zero
+exit means fix the body, not post it anyway. The same two commands apply to
+any issue body or comment you write with `--body-file`.
 
 The body follows `.github/pull_request_template.md`:
 
 - `Closes #$ARGUMENTS` on the first line.
-- Every Verification box ticked with real numbers, for example
-  `npm run test:ci passes, 77 of 77`. Never tick a box you did not run.
+- Every Verification box ticked with the real numbers from the run you just
+  did. Never tick a box you did not run, and never carry a count over from
+  another branch. Read it off the terminal every time.
 - Notes for review names anything the reviewer should look at closely.
 
 Writing style for commits, PR titles and PR bodies: no em dashes, and never
