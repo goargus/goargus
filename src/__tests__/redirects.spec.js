@@ -1,14 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import routes from 'pages-generated'
+import { pageRoutes } from '../../build/pageRoutes.js'
 
-describe('public/_redirects', () => {
-  it('rewrites every path to index.html with a 200', () => {
-    const contents = readFileSync(
-      resolve(process.cwd(), 'public/_redirects'),
-      'utf-8',
-    )
+const routerPaths = routes
+  .map((route) => route.path)
+  .filter((path) => !path.includes(':'))
+  .sort()
 
-    expect(contents.trim()).toBe('/* /index.html 200')
+describe('the static route shells emitted at build time', () => {
+  it('cover exactly the paths the router defines, no more and no fewer', () => {
+    expect(pageRoutes()).toEqual(routerPaths)
+  })
+
+  it('excludes the catch-all page, which must not become a static file', () => {
+    expect(pageRoutes().some((path) => path.includes('all'))).toBe(false)
+  })
+
+  it('leaves no _redirects file, whose rewrites 308 every deep link to the homepage', () => {
+    expect(existsSync(resolve(process.cwd(), 'public/_redirects'))).toBe(false)
   })
 })
