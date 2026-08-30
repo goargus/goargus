@@ -17,6 +17,10 @@ Prefix every `gh` call with `export GH_CONFIG_DIR=~/.config/gh`.
 - **Never open a red PR.** All three gates pass locally first.
 - **Touch only the files the issue lists.** If the change genuinely needs a
   file the issue does not name, add it and say so under Notes for review.
+- **No code comments.** Write the code bare: no inline comments, no block
+  comments, no JSDoc headers. Anything worth explaining goes in the PR body
+  under Notes for review, or in a PR comment. Comments already in the
+  codebase stay; removing them is its own task.
 
 ## Phase 1: Read the contract
 
