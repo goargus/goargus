@@ -1,79 +1,65 @@
-name: Deploy Vue.js to GitHub Pages on Release
+name: Deploy
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
+    name: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
-      - name: Restore cached dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            npm-${{ runner.os }}-
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm run test
+      - name: Lint
+        run: npm run lint
 
-      - name: Define environment variables
-        run: echo "VITE_EMAILJS_PUBLIC_KEY=${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}" >> $GITHUB_ENV
+      - name: Test
+        run: npm run test:ci
 
-      - name: Build the project
+      - name: Build
         run: npm run build
-        
-      - name: List build output
-        run: ls -al ./dist
+        env:
+          VITE_EMAILJS_PUBLIC_KEY: ${{ secrets.VITE_EMAILJS_PUBLIC_KEY }}
+          VITE_EMAILJS_SERVICE_ID: ${{ secrets.VITE_EMAILJS_SERVICE_ID }}
+          VITE_EMAILJS_TEMPLATE_ID: ${{ secrets.VITE_EMAILJS_TEMPLATE_ID }}
 
-      - name: Debug - List build output
+      - name: Check for Cloudflare credentials
+        id: cloudflare
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          echo "Current directory contents:"
-          ls -la
-          echo "Dist directory contents:"
-          ls -la ./dist || echo "Dist directory not found"
+          if [ -n "$TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials are absent, skipping the deploy. See issue #54."
+          fi
 
-      - name: Upload artifact for deployment
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Cloudflare Pages
+        if: steps.cloudflare.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: ./dist
-          name: github-pages
-      
-  deploy:
-    needs: build
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=goargus --branch=${{ github.head_ref || github.ref_name }}
