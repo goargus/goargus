@@ -12,7 +12,7 @@ Argus landing page - a Vue 3 + Vite single-page application with Tailwind CSS st
 
 ```bash
 npm run dev       # Start dev server (with --host for network access)
-npm run build     # Production build (includes obfuscation)
+npm run build     # Production build
 npm run preview   # Preview production build
 npm run lint      # Run ESLint
 npm run test      # Run Vitest (runs in watch mode by default)
@@ -47,7 +47,6 @@ VITE_EMAILJS_PUBLIC_KEY=your_key_here
 ## Build Configuration
 
 Production builds include:
-- Code obfuscation via `vite-plugin-obfuscator`
 - Console/debugger statement removal
 - Vendor chunk splitting (vue, vue-router)
 - Terser minification
