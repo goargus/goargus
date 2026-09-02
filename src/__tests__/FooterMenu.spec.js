@@ -49,28 +49,38 @@ describe('FooterMenu', () => {
     })
     const links = wrapper.findAll('a')
 
-    expect(links.length).toBe(4)
+    expect(links.length).toBe(2)
     expect(links[0].text()).toBe('Contáctanos')
     expect(links[0].attributes('href')).toBe('/contact')
     expect(links[1].text()).toBe('Acerca de Nosotros')
     expect(links[1].attributes('href')).toBe('/about')
   })
 
-  it('renders social media links with correct attributes', () => {
+  it('renders no social media icons', () => {
     const wrapper = mount(FooterMenu, {
       props: mockProps,
       global: {
         plugins: [router]
       }
     })
-    const socialLinks = wrapper.findAll('a.social-icon-link')
-    const socialImages = wrapper.findAll('img.social-icon')
 
-    expect(socialLinks.length).toBe(2)
-    expect(socialImages.length).toBe(2)
+    expect(wrapper.findAll('a.social-icon-link')).toHaveLength(0)
+    expect(wrapper.findAll('img.social-icon')).toHaveLength(0)
+  })
 
-    expect(socialImages[0].attributes('alt')).toBe('Facebook')
-    expect(socialImages[1].attributes('alt')).toBe('Instagram')
+  it('has no link pointing at a placeholder href', () => {
+    const wrapper = mount(FooterMenu, {
+      props: mockProps,
+      global: {
+        plugins: [router]
+      }
+    })
+
+    for (const link of wrapper.findAll('a')) {
+      const href = link.attributes('href')
+      expect(href).toBeTruthy()
+      expect(href).not.toBe('#')
+    }
   })
 
   it('has correct CSS classes and styles', () => {
