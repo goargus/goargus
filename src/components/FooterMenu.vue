@@ -20,33 +20,6 @@
           </router-link>
         </li>
       </ul>
-
-      <div class="social-icons">
-        <a
-          href="#"
-          aria-label="Facebook"
-          class="social-icon-link"
-        >
-          <img
-            loading="lazy"
-            src="../assets/facebook.svg"
-            alt="Facebook"
-            class="social-icon"
-          />
-        </a>
-        <a
-          href="#"
-          aria-label="Instagram"
-          class="social-icon-link"
-        >
-          <img
-            loading="lazy"
-            src="../assets/instagram.svg"
-            alt="Instagram"
-            class="social-icon"
-          />
-        </a>
-      </div>
     </nav>
   </footer>
 </template>
@@ -85,18 +58,5 @@ defineProps<{
   @apply text-lightGreen text-lg md:text-2xl no-underline;
   @apply transition-all duration-300;
   @apply hover:opacity-80 hover:translate-x-1;
-}
-
-.social-icons {
-  @apply flex gap-4 items-center mt-2;
-}
-
-.social-icon-link {
-  @apply transition-all duration-300;
-  @apply hover:scale-110 hover:opacity-80;
-}
-
-.social-icon {
-  @apply w-7 h-7 md:w-8 md:h-8 object-contain;
 }
 </style>
