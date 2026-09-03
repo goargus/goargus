@@ -6,7 +6,7 @@ See `/mnt/shared/development/CLAUDE.md` for global development guidelines.
 
 ## Project Overview
 
-Argus landing page - a Vue 3 + Vite single-page application with Tailwind CSS styling and EmailJS integration for the contact form.
+Argus landing page - a Vue 3 + Vite single-page application with Tailwind CSS styling, deployed to Cloudflare Pages. The contact form posts to a Pages Function that sends through Resend.
 
 ## Development Commands
 
@@ -35,14 +35,13 @@ npx vitest run src/__tests__/ContactForm.spec.js
 - `src/main.js` - Vue app initialization
 - `src/App.vue` - Root component with navigation setup
 
-**Contact Form**: Uses EmailJS for client-side email sending. Requires `VITE_EMAILJS_PUBLIC_KEY` environment variable.
+**Contact Form**: `src/components/ContactForm.vue` posts JSON to `/api/contact`, a Cloudflare Pages Function in `functions/api/contact.js` that validates the fields server-side and sends through the Resend API. The sending credential never reaches the browser.
 
 ## Environment Variables
 
-For local development, create a `.env` file:
-```
-VITE_EMAILJS_PUBLIC_KEY=your_key_here
-```
+The client bundle needs none. The contact Function reads three variables from the Cloudflare Pages project, `RESEND_API_KEY` (encrypted secret), `CONTACT_TO` (the inbox that receives the leads) and the optional `CONTACT_FROM` (defaults to the Resend onboarding sender).
+
+To exercise the Function locally, run `npx wrangler pages dev dist --binding CONTACT_TO=you@example.com --binding RESEND_API_KEY=re_...` after a build.
 
 ## Build Configuration
 
@@ -57,7 +56,7 @@ Tests use Vitest + Vue Test Utils with jsdom environment. Test files are in `src
 
 ## Deployment
 
-Automatic deployment to GitHub Pages via `.github/workflows/deploy.yml` on push to main. The workflow runs tests before building.
+Automatic deployment to Cloudflare Pages via `.github/workflows/deploy.yml` on push to main, and a preview deployment on every pull request. The workflow lints, tests and builds before deploying.
 
 ## Notes
 

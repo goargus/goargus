@@ -1,11 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import emailjs from 'emailjs-com'
 import ContactForm from '../../components/ContactForm.vue'
-
-vi.mock('emailjs-com', () => ({
-  default: { send: vi.fn() },
-}))
 
 const SUCCESS_MESSAGE = '¡Mensaje enviado con éxito!'
 const ERROR_MESSAGE = 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.'
@@ -18,6 +13,10 @@ const filledForm = {
   message: 'This is a test message with more than 10 characters',
 }
 
+function jsonResponse(body, status = 200) {
+  return { ok: status >= 200 && status < 300, status, json: async () => body }
+}
+
 async function submitFilledForm() {
   const wrapper = mount(ContactForm)
   await wrapper.setData({ form: { ...filledForm } })
@@ -28,6 +27,11 @@ async function submitFilledForm() {
 
 describe('ContactForm', () => {
   beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
     vi.clearAllMocks()
   })
 
@@ -83,22 +87,32 @@ describe('ContactForm', () => {
     expect(button.text()).toBe('Enviar')
   })
 
-  it('Sends the form values through EmailJS on submit', async () => {
-    emailjs.send.mockResolvedValue({ status: 200, text: 'OK' })
+  it('Posts the form values to the contact endpoint on submit', async () => {
+    fetch.mockResolvedValue(jsonResponse({ ok: true }))
 
     await submitFilledForm()
 
-    expect(emailjs.send).toHaveBeenCalledTimes(1)
-    expect(emailjs.send.mock.calls[0][2]).toEqual({
-      name: 'John Doe',
-      email: filledForm.email,
-      phone: filledForm.phone,
-      message: filledForm.message,
-    })
+    expect(fetch).toHaveBeenCalledTimes(1)
+
+    const [url, options] = fetch.mock.calls[0]
+    expect(url).toBe('/api/contact')
+    expect(options.method).toBe('POST')
+    expect(options.headers['content-type']).toBe('application/json')
+    expect(JSON.parse(options.body)).toEqual(filledForm)
   })
 
-  it('Shows the success feedback when the send resolves', async () => {
-    emailjs.send.mockResolvedValue({ status: 200, text: 'OK' })
+  it('Never sends a credential from the browser', async () => {
+    fetch.mockResolvedValue(jsonResponse({ ok: true }))
+
+    await submitFilledForm()
+
+    const [, options] = fetch.mock.calls[0]
+    expect(options.headers.authorization).toBeUndefined()
+    expect(JSON.stringify(options)).not.toMatch(/api[_-]?key|bearer|re_/i)
+  })
+
+  it('Shows the success feedback when the request resolves', async () => {
+    fetch.mockResolvedValue(jsonResponse({ ok: true }))
 
     const wrapper = await submitFilledForm()
     const feedback = wrapper.find('.message-feedback')
@@ -112,9 +126,9 @@ describe('ContactForm', () => {
     expect(wrapper.vm.form.message).toBe('')
   })
 
-  it('Shows the error feedback when the send rejects', async () => {
+  it('Shows the error feedback when the endpoint returns a failure status', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
-    emailjs.send.mockRejectedValue(new Error('The user ID is required.'))
+    fetch.mockResolvedValue(jsonResponse({ error: 'not_configured' }, 500))
 
     const wrapper = await submitFilledForm()
     const feedback = wrapper.find('.message-feedback')
@@ -124,6 +138,22 @@ describe('ContactForm', () => {
     expect(feedback.classes()).toContain('message-error')
     expect(wrapper.vm.isSuccess).toBe(false)
     expect(wrapper.vm.isSubmitting).toBe(false)
+    expect(wrapper.vm.form.message).toBe(filledForm.message)
+    expect(consoleError).toHaveBeenCalledTimes(1)
+
+    consoleError.mockRestore()
+  })
+
+  it('Shows the error feedback when the request itself rejects', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    fetch.mockRejectedValue(new TypeError('Failed to fetch'))
+
+    const wrapper = await submitFilledForm()
+    const feedback = wrapper.find('.message-feedback')
+
+    expect(feedback.text()).toBe(ERROR_MESSAGE)
+    expect(feedback.classes()).toContain('message-error')
+    expect(wrapper.vm.isSuccess).toBe(false)
     expect(wrapper.vm.form.message).toBe(filledForm.message)
     expect(consoleError).toHaveBeenCalledTimes(1)
 
