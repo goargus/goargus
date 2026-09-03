@@ -59,8 +59,6 @@
 </template>
 
 <script>
-import emailjs from "emailjs-com";
-
 export default {
   data() {
     return {
@@ -88,17 +86,21 @@ export default {
       this.message = "";
 
       try {
-        await emailjs.send(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-          {
-            name: `${this.form.name} ${this.form.lastName}`,
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            name: this.form.name,
+            lastName: this.form.lastName,
             email: this.form.email,
             phone: this.form.phone,
             message: this.form.message
-          },
-          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-        );
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`El servidor respondió ${response.status}`);
+        }
 
         this.message = "¡Mensaje enviado con éxito!";
         this.isSuccess = true;
@@ -106,7 +108,7 @@ export default {
       } catch (error) {
         this.message = "Error al enviar el mensaje. Por favor, inténtalo de nuevo.";
         this.isSuccess = false;
-        console.error("EmailJS Error:", error);
+        console.error("Contact form error:", error);
       } finally {
         this.isSubmitting = false;
 
