@@ -28,6 +28,7 @@ import websiteDesign3 from '../assets/websiteDesign3.png'
 </script>
 
 <style scoped>
+@reference "../style.css";
 .quote-banner {
   @apply relative flex flex-col md:flex-row items-center justify-center;
   @apply w-full py-8 md:py-4 px-4 md:px-8;

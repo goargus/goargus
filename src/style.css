@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -91,9 +90,12 @@ button:focus-visible {
 h2{
   font-family: 'Ailerons', sans-serif;
 }
-h1{
-  @apply text-3xl font-semibold text-txtcolor ;
-}
-p{
-  @apply text-txtcolor text-[18px] font-normal leading-normal mx-auto;
+@layer base {
+  h1{
+    @apply text-3xl font-semibold text-txtcolor ;
+  }
+  p{
+    @apply text-txtcolor text-[18px] font-normal mx-auto;
+    line-height: 1.5;
+  }
 }

@@ -114,6 +114,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .nav-container {
   @apply items-center gap-8 xl:gap-[79px] py-4 xl:py-6 px-8 xl:pr-[65px] xl:pl-[74px] rounded-[62px] shadow-3xl;
 }

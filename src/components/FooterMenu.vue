@@ -31,6 +31,7 @@ defineProps<{
 </script>
 
 <style scoped>
+@reference "../style.css";
 .footer-container {
   @apply relative flex flex-col md:flex-row justify-between items-center;
   @apply px-6 md:px-12 py-8 md:py-0 min-h-[150px] md:min-h-[193px];

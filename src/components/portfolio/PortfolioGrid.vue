@@ -33,6 +33,7 @@ const gridClass = computed(() => ({
 </script>
 
 <style scoped>
+@reference "../../style.css";
 .portfolio-grid {
   @apply grid gap-6 grid-cols-1;
 }

@@ -122,13 +122,14 @@ export default {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .h1contact {
   @apply text-2xl md:text-3xl font-semibold text-center text-txtcolor mb-8 md:mb-16;
 }
 
 .txtbox {
   @apply w-full px-4 py-3 text-gray rounded-full shadow-neumorphic border-0 text-center bg-snowGray;
-  @apply text-lg md:text-[22px];
+  @apply text-lg md:text-[22px] leading-7;
   @apply transition-all duration-300 ease-out;
   @apply focus:outline-none focus:ring-2 focus:ring-lightGreen focus:ring-offset-2 focus:ring-offset-snowGray;
   @apply hover:shadow-lg;
@@ -140,7 +141,7 @@ export default {
 
 .txtboxmsg {
   @apply w-full h-[180px] md:h-[246px] px-4 py-6 md:py-8 text-gray rounded-3xl shadow-neumorphic border-0 bg-snowGray;
-  @apply text-lg md:text-[22px] text-center;
+  @apply text-lg md:text-[22px] leading-7 text-center;
   @apply transition-all duration-300 ease-out resize-none;
   @apply focus:outline-none focus:ring-2 focus:ring-lightGreen focus:ring-offset-2 focus:ring-offset-snowGray;
   @apply hover:shadow-lg;

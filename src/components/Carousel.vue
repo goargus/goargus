@@ -110,6 +110,7 @@ const handleTouchEnd = () => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .carousel-transition {
   @apply transition-transform duration-300 ease-out;
 }

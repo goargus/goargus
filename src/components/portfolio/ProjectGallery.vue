@@ -122,6 +122,7 @@ const handleTouchEnd = () => {
 </script>
 
 <style scoped>
+@reference "../../style.css";
 .gallery {
   @apply relative;
 }

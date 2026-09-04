@@ -67,6 +67,7 @@ const remainingTechCount = computed(() =>
 </script>
 
 <style scoped>
+@reference "../../style.css";
 .portfolio-card {
   @apply rounded-2xl shadow-3xl overflow-hidden cursor-pointer;
   @apply transition-all duration-300 ease-out;
