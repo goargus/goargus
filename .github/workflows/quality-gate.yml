@@ -36,3 +36,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Audit for critical advisories
+        run: npm audit --audit-level=critical
+
+      - name: Audit shipped dependencies
+        run: npm audit --omit=dev --audit-level=high
