@@ -86,6 +86,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .section-title {
   @apply text-4xl md:text-5xl lg:text-6xl tracking-tighter leading-none lowercase;
 }

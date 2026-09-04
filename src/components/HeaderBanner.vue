@@ -72,6 +72,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .degraded {
   @apply absolute inset-0;
   background: linear-gradient(90deg, rgba(7, 47, 46, 0.8) 40%, rgba(9, 9, 1, 0.8) 100%);

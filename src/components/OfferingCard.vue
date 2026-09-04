@@ -60,6 +60,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .offering-card {
   @apply flex flex-col justify-between bg-snowGray rounded-2xl shadow-3xl;
   @apply w-full max-w-[350px] px-4 py-6 md:px-5 md:py-9;
@@ -80,11 +81,11 @@ onUnmounted(() => {
 @keyframes cardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    translate: 0 20px;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 </style>

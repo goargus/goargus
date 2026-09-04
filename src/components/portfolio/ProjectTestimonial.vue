@@ -24,6 +24,7 @@ defineProps<{
 </script>
 
 <style scoped>
+@reference "../../style.css";
 .testimonial {
   @apply relative bg-snowGray rounded-2xl p-6 md:p-8;
 }

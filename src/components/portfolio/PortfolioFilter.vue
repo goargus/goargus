@@ -38,6 +38,7 @@ defineEmits<{
 </script>
 
 <style scoped>
+@reference "../../style.css";
 .filter-container {
   @apply flex flex-wrap gap-2 justify-center;
 }

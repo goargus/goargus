@@ -105,6 +105,7 @@ const closeProjectModal = () => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .section-container {
   @apply max-w-6xl mx-auto px-4;
 }

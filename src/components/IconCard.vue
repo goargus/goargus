@@ -50,6 +50,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@reference "../style.css";
 .icon-card {
   @apply flex flex-col items-center text-center bg-snowGray rounded-lg;
   @apply p-8 md:p-12 lg:p-16 w-full max-w-[500px];
@@ -78,11 +79,11 @@ onUnmounted(() => {
 @keyframes cardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    translate: 0 20px;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    translate: 0 0;
   }
 }
 </style>
