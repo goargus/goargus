@@ -2,6 +2,7 @@
   <div class="w-full">
     <header-banner
       title="ARGUS"
+      :level="1"
       :show-scroll-indicator="true"
     />
   </div>

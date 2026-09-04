@@ -1,25 +1,37 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
-import { copyFileSync, existsSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pageRoutes } from './build/pageRoutes.js'
+import { withRouteMeta, renderSitemap, notFoundPath } from './src/siteMeta.js'
 
-function emitRouteShells() {
+function routeMetadata() {
   return {
-    name: "emit-route-shells",
-    apply: "build",
+    name: "route-metadata",
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        return withRouteMeta(html, "/");
+      },
+    },
     writeBundle(options) {
       const outDir = options.dir ?? "dist";
-      const shell = resolve(outDir, "index.html");
-      if (!existsSync(shell)) {
+      const shellPath = resolve(outDir, "index.html");
+      if (!existsSync(shellPath)) {
         this.error("index.html was not emitted, cannot create the route shells");
       }
-      copyFileSync(shell, resolve(outDir, "404.html"));
-      for (const route of pageRoutes()) {
+      const shell = readFileSync(shellPath, "utf8");
+
+      writeFileSync(resolve(outDir, "404.html"), withRouteMeta(shell, notFoundPath));
+
+      const routes = pageRoutes();
+      for (const route of routes) {
         if (route === "/") continue;
-        copyFileSync(shell, resolve(outDir, `${route.slice(1)}.html`));
+        writeFileSync(resolve(outDir, `${route.slice(1)}.html`), withRouteMeta(shell, route));
       }
+
+      writeFileSync(resolve(outDir, "sitemap.xml"), renderSitemap(routes));
     },
   };
 }
@@ -30,10 +42,10 @@ export default defineConfig({
   plugins: [
     vue(),
     Pages(),
-    emitRouteShells(),
+    routeMetadata(),
   ],
   build: {
-    outDir: "dist",  
+    outDir: "dist",
     minify: "terser",
     cssCodeSplit: false,
     terserOptions: {
