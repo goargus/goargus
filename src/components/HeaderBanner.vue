@@ -8,12 +8,13 @@
     <div class="degraded"></div>
 
     <div class="absolute inset-0 flex flex-col items-center justify-center px-4">
-      <h2
+      <component
+        :is="headingTag"
         class="hero-title opacity-0"
         :class="{ 'animate-fade-in-up': mounted }"
       >
         {{ title }}
-      </h2>
+      </component>
 
       <p
         v-if="subtitle"
@@ -50,15 +51,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
-defineProps<{
+const props = withDefaults(defineProps<{
   title: string
   subtitle?: string
   ctaText?: string
   ctaLink?: string
   showScrollIndicator?: boolean
-}>()
+  level?: 1 | 2
+}>(), { level: 2 })
+
+const headingTag = computed(() => `h${props.level}`)
 
 const mounted = ref(false)
 
